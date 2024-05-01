@@ -34,7 +34,7 @@
     setup() {
       const poll = ref({ question: '', choices: [] });
       const voted = ref(false);
-  
+      /* added comment*/
       const fetchPoll = async () => {
         try {
           const response = await axios.get('http://localhost:5656/polls/today');
