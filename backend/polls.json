@@ -1,0 +1,18 @@
+[
+    {
+        "date": "2024-04-15",
+        "question": "When do you prefer shower?",
+        "choices": ["Morning", "Night", "Both"]
+    },
+    {
+        "date": "2024-04-16",
+        "question": "Does Pineapple belong on pizza?",
+        "choices": ["Yes", "No"]
+    },
+    {
+        "date": "2024-05-01",
+        "question": "What programming language is best?",
+        "choices": ["Python", "Java", "C", "Other"]
+    }
+]
+
