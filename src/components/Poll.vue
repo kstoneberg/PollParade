@@ -1,6 +1,6 @@
 <template>
   <div class="poll">
-    <canvas id="bgCanvas" style="position: absolute; top: 0; left: 0; z-index: -1; width: 100%; height: 100%;"></canvas>
+    <canvas id="bgCanvas"></canvas>
     <div style="position: relative; z-index: 1;">
       <transition name="flip" mode="out-in">
         <div :key="voted ? 'prediction' : 'voting'">
@@ -24,7 +24,6 @@
               <button
                 v-for="choice in poll.choices"
                 :key="choice.text"
-                :style="{ backgroundColor: 'white'}"
                 @click="submitPrediction(choice.text)"
                 class="prediction-button">
                 {{ choice.text }}
@@ -59,26 +58,25 @@
 
       onMounted(() => {
         canvas.value = document.getElementById('bgCanvas');
-        adjustCanvasSize();
         window.addEventListener('resize', adjustCanvasSize);
-        resetBackground();
+        //resetBackground();
         adjustCanvasSize();
       });
 
       const adjustCanvasSize = () => {
         if (canvas.value) {
-          const rect = canvas.value.parentNode.getBoundingClientRect();
-          canvas.value.width = rect.width; // Set width to container's width
-          canvas.value.height = rect.height; // Set height to container's height
+          //const rect = canvas.value.parentNode.getBoundingClientRect();
+          canvas.value.width = window.innerWidth; // Set width to container's width
+          canvas.value.height = window.innerHeight; // Set height to container's height
           draw(); // Redraw the content after resizing
         }
       };
 
       const draw = () => {
         const ctx = canvas.value.getContext('2d');
-        // Any drawing operations go here, e.g., fill with a color
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
-        ctx.fillRect(0, 0, canvas.value.width, canvas.value.height);
+        ctx.clearRect(0, 0, canvas.value.width, canvas.value.height); // Clear the canvas
+        ctx.fillStyle = 'white';
+        ctx.fillRect(0, 0, canvas.value.width, canvas.value.height); // Fill the canvas
       };
 
       const fetchPoll = async () => {
@@ -178,25 +176,90 @@
   </script>
   
   <style scoped>
+
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    width: 100vw;
+    height: 100vh; /* Ensures that the body takes up the full height of the viewport */
+    overflow: hidden; /* Prevents scrolling */
+  }
+
   .poll {
-    position: relative;
+    position: fixed;
     text-align: center;
     font-family: Arial, sans-serif;
     font-size: 44px;
-    height: 95vh; /* Adjust height as needed */
-    margin: 0;
+    height: 100vh; 
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+    /*margin-top: 5%;*/
     overflow: hidden;
   }
 
   #bgCanvas {
-    position: absolute;
+    margin: 0;
+    padding: 0;
+    position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
+    width: 100vw;
+    height: 100vh;
     z-index: -1;
+    display: block;
   }
   
+  .choice-button {
+    margin: 30px;
+    border-radius: 50px;
+    border: none;
+    color: white;
+    font-family: Arial, sans-serif;
+    font-size: 1em;
+    width: 30%; /* Adjust based on total width for better mobile responsiveness */
+    min-width: 400px;
+    min-height: 550px;
+    transition: 0.2s ease-in;
+  }
+
+  .prediction-button {
+    margin: 20px;
+    padding: 20px 60px;
+    border-radius: 10px;
+    border: none;
+    color: black;
+    font-family: Arial, sans-serif;
+    font-size: 1em;
+    width: 20%; /* Adjust based on total width for better mobile responsiveness */
+    transition: 0.2s ease-in;
+  }
+
+  .choice-button:hover {
+    transform: scale(1.1);  /*makes the button grow*/
+  }
+
+  .choices {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    width: 100%;
+  }
+
+  .predictions {
+    display: flex;
+    flex-direction: column; /* Stack buttons vertically */
+    align-items: center;
+  }
+
+  .prediction-button:hover {
+    background: #f2ff80;
+    box-shadow: 0 0 5px #f2ff80, 0 0 25px #f2ff80, 0 0 50px #f2ff80, 0 0 200px #f2ff80;
+  }
 
   /****TRANSITIONS****/
 
@@ -236,50 +299,5 @@
   }
 
   /*******************/
-  
-  .choice-button {
-    margin: 30px;
-    padding: 300px 150px;
-    border-radius: 50px;
-    border: none;
-    color: white;
-    font-family: Arial, sans-serif;
-    font-size: 1em;
-    width: 50%; /* Adjust based on total width for better mobile responsiveness */
-    transition: 0.2s ease-in;
-  }
-
-  .prediction-button {
-    margin: 20px;
-    padding: 20px 60px;
-    border-radius: 10px;
-    border: none;
-    color: black;
-    font-family: Arial, sans-serif;
-    font-size: 1em;
-    width: 20%; /* Adjust based on total width for better mobile responsiveness */
-    transition: 0.4s ease-in;
-  }
-
-  .choice-button:hover {
-    transform: scale(1.1);  /*makes the button grow*/
-  }
-
-  .choices {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-  }
-
-  .predictions {
-    display: flex;
-    flex-direction: column; /* Stack buttons vertically */
-    align-items: center;
-  }
-
-  .prediction-button:hover {
-    background: #f2ff80;
-    box-shadow: 0 0 5px #f2ff80, 0 0 25px #f2ff80, 0 0 50px #f2ff80, 0 0 200px #f2ff80;
-  }
   </style>
   
