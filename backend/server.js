@@ -18,7 +18,6 @@ mongoose.connect(dbUri)
 //get todays poll
 app.get('/polls/today', async (req, res) => {
   const todayString = new Date().toISOString().split('T')[0]; //get today's date as a string
-
   try {
     const poll = await Poll.findOne({ date: todayString });
     if (poll) {

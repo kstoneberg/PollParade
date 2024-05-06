@@ -19,7 +19,7 @@
             </div>
           </div>
           <div v-if="voted">
-            <h2>Predict which choice will get the most votes:</h2>
+            <h2>Predict which choice will get the most votes</h2>
             <div class="choices predictions">
               <button
                 v-for="choice in poll.choices"
@@ -57,6 +57,8 @@
       const canvas = ref(null);
 
       onMounted(() => {
+        const dateString = new Date().toISOString()
+        console.log(dateString);
         canvas.value = document.getElementById('bgCanvas');
         window.addEventListener('resize', adjustCanvasSize);
         //resetBackground();
@@ -102,8 +104,6 @@
           alert('Failed to submit vote');
         }
       };
-
-      /*STOP HERE */
   
       const submitPrediction = async (choice) => {
         try {
@@ -193,13 +193,14 @@
     position: fixed;
     text-align: center;
     font-family: Arial, sans-serif;
+    font-variant-caps: all-small-caps;
     font-size: 44px;
     height: 100vh; 
     width: 100vw;
     display: flex;
     justify-content: center;
     /*margin-top: 5%;*/
-    overflow: hidden;
+    overflow: visible;
   }
 
   #bgCanvas {
@@ -213,11 +214,32 @@
     z-index: -1;
     display: block;
   }
+
+  /* Styles for Questions */
+  h1 {
+    font-size: 4.5rem; /* Larger font size for better readability */
+    font-weight: 800; /* Bolder for emphasis */
+    text-decoration: underline overline;
+    text-underline-offset: 30px;
+    color: #333; /* Darker shade for better contrast */
+    margin: 0 0 30px; /* Added spacing below the question */
+    margin-top: 5%;
+  }
+
+  h2 {
+    font-size: 3.5rem; /* Larger font size for better readability */
+    font-weight: 800; /* Bolder for emphasis */
+    text-decoration: underline overline;
+    text-underline-offset: 30px;
+    color: #333; /* Darker shade for better contrast */
+    margin: 0 0 30px; /* Added spacing below the question */
+    margin-top: 5%;
+  }
   
   .choice-button {
     margin: 30px;
     border-radius: 50px;
-    border: none;
+    border: 0.7rem solid rgba(255, 255, 255, 0.315);
     color: white;
     font-family: Arial, sans-serif;
     font-size: 1em;
@@ -286,7 +308,7 @@
     perspective: 1000px;
   }
   .flip-enter-from, .flip-leave-to {
-    transform: rotateY(180deg);
+    transform: rotateX(180deg);
   }
 
   /*expand*/
