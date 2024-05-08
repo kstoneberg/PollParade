@@ -4,7 +4,9 @@
     <div style="position: relative; z-index: 1;">
       <transition name="flip" mode="out-in">
         <div :key="voted ? 'prediction' : 'voting'">
-          <div v-if="!voted">
+          <!-- Voting Interface -->
+          <div v-if="!voted && !predictionSubmitted">
+            <h3>{{ displayDate }}</h3>
             <h1>{{ poll.question }}</h1>
             <div class="choices">
               <button
@@ -18,7 +20,8 @@
               </button>
             </div>
           </div>
-          <div v-if="voted">
+          <!-- Prediction Interface -->
+          <div v-if="voted && !predictionSubmitted">
             <h2>Predict which choice will get the most votes</h2>
             <div class="choices predictions">
               <button
@@ -32,20 +35,39 @@
           </div>
         </div>
       </transition>
+      <!-- Confirmation and Results Viewing -->
+      <div v-if="predictionSubmitted && yesterdayResults.length === 0">
+        <h4>Your vote has been recorded.</h4>
+        <button @click="viewYesterdayResults">View Yesterday's Results</button>
+      </div>
+      <div v-if="yesterdayResults.length > 0" class="chart-container">
+        <h5>On {{ displayDate }} we asked you:</h5>
+        <h1>{{ displayQuestion }}</h1>
+        <canvas id="myChart"></canvas>
+      </div>
     </div>
   </div>
 </template>
+
   
   <script>
-  import { ref, onMounted } from 'vue';
+  import { ref, onMounted, computed, nextTick } from 'vue';
   import axios from 'axios';
+  import { Chart, registerables } from "chart.js";
+
   
+  Chart.register(...registerables);
+
   export default {
     name: 'PollComponent',
     setup() {
-      const poll = ref({ question: '', choices: [] });
+      const poll = ref({ date: '', question: '', choices: [] });
       const voted = ref(false);
-      //colors for vote choice buttons
+      const predictionSubmitted = ref(false);
+      const yesterdayResults = ref([]);
+      const displayQuestion = ref('');
+      var myChart;
+
       const colors = ["#ff4b4b", "#4b6bff", "#47d147", "#ffa500"];  //red, blue, green, orange
       const bgGradients = [
           { start: "#ffada9", end: "#ff4d4d" }, // red gradient
@@ -55,6 +77,10 @@
       ];
       let lastHovered = -1;
       const canvas = ref(null);
+
+      var displayDate = computed(() => {
+        return poll.value.date.slice(5);
+      });
 
       onMounted(() => {
         const dateString = new Date().toISOString()
@@ -112,13 +138,36 @@
             choice: choice,
             date: new Date().toISOString().split('T')[0]
           });
-          console.log(response.data.message);  // Display a simple alert with the server response
-          voted.value = false;  // Reset or navigate away
+          console.log(response.data.message);
+          predictionSubmitted.value = true;
         } catch (error) {
           console.error('Failed to submit prediction:', error);
           alert('Failed to submit prediction');
         }
       };
+
+      const viewYesterdayResults = async () => {
+        const yesterday = new Date();
+        yesterday.setDate(yesterday.getDate() - 1);  // Set the date to yesterday
+        const dateString = yesterday.toISOString().split('T')[0];  // Format as 'YYYY-MM-DD'
+
+        try {
+            const response = await axios.get(`http://localhost:5656/polls/results/${dateString}`);
+            yesterdayResults.value = response.data.choices;  // Store the fetched results
+            if (response.data && response.data.question) {
+                displayQuestion.value = response.data.question;  // Update the question
+            }
+
+            displayDate = dateString;
+
+            await nextTick(); // Wait for the DOM to update
+            createChart();
+        } catch (error) {
+            console.error('Failed to fetch yesterday\'s results:', error);
+            alert('Failed to retrieve results');
+        }
+      };
+
 
       const changeBackground = (index) => {
         if(index != lastHovered){
@@ -147,6 +196,40 @@
         lastHovered = index;
       };
 
+      const createChart = () => {
+        nextTick(() => {
+          var chartCanvas = document.getElementById('myChart');
+          if (chartCanvas) {
+            var ctx = chartCanvas.getContext('2d');
+            if (ctx) {
+              // Destroy existing chart instance if exists
+              if (myChart) myChart.destroy();
+
+              myChart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                  labels: yesterdayResults.value.map(choice => choice.text),
+                  datasets: [{
+                    data: yesterdayResults.value.map(choice => choice.votes),
+                    backgroundColor: ['#ff4b4b', '#4b6bff', '#47d147', '#ffa500'],
+                    hoverOffset: 4
+                  }]
+                },
+                options: {
+                  responsive: true,
+                  maintainAspectRatio: false
+                }
+              });
+            } else {
+              console.error('Failed to get context from canvas');
+            }
+          } else {
+            console.error('Canvas element not found');
+          }
+        });
+      }
+
+
       const resetBackground = () => {
         const ctx = canvas.value.getContext('2d');
         let alpha = 1; // Start fading out from full opacity
@@ -170,7 +253,21 @@
   
       onMounted(fetchPoll);
   
-      return { poll, voted, submitVote, submitPrediction, colors, changeBackground, resetBackground };
+      return { poll,
+               voted,
+               predictionSubmitted,
+               submitVote,
+               submitPrediction,
+               viewYesterdayResults,
+               yesterdayResults,
+               colors,
+               changeBackground,
+               resetBackground,
+               displayDate,
+               displayQuestion,
+               createChart,
+               myChart
+             };
     }
   };
   </script>
@@ -215,9 +312,34 @@
     display: block;
   }
 
-  /* Styles for Questions */
+  .chart-container {
+    width: 100%; /* Full width of its parent */
+    height: 600px; /* Fixed height */
+    margin: auto; /* Center it horizontally */
+    position: relative; /* Position context for the canvas */
+  }
+
+  #myChart {
+    width: 100%; /* Full width of its container */
+    height: 100%; /* Full height of its container */
+  }
+
+
+  /* Style for Questions */
   h1 {
     font-size: 4.5rem; /* Larger font size for better readability */
+    font-weight: 800; /* Bolder for emphasis */
+    text-decoration: underline overline;
+    text-decoration-thickness: 6px;
+    text-underline-offset: 30px;
+    color: #333; /* Darker shade for better contrast */
+    margin: 0 0 30px; /* Added spacing below the question */
+
+  }
+
+  /* Style for Prediction Prompt */
+  h2 {
+    font-size: 3.5rem; /* Larger font size for better readability */
     font-weight: 800; /* Bolder for emphasis */
     text-decoration: underline overline;
     text-underline-offset: 30px;
@@ -226,13 +348,27 @@
     margin-top: 5%;
   }
 
-  h2 {
-    font-size: 3.5rem; /* Larger font size for better readability */
-    font-weight: 800; /* Bolder for emphasis */
-    text-decoration: underline overline;
-    text-underline-offset: 30px;
+  /* Style for display date */
+  h3 {
+    font-size: 1.5rem; /* Larger font size for better readability */
+    font-weight: 10; /* Bolder for emphasis */
     color: #333; /* Darker shade for better contrast */
-    margin: 0 0 30px; /* Added spacing below the question */
+    margin-top: 5%;
+  }
+
+  /* Style for your vote has been recorded */
+  h4 {
+    font-size: 1.5rem; /* Larger font size for better readability */
+    font-weight: 10; /* Bolder for emphasis */
+    color: #333; /* Darker shade for better contrast */
+    margin-top: 5%;
+  }
+
+  /* Style for yesterday's results prompt */
+  h5 {
+    font-size: 1.5rem; /* Larger font size for better readability */
+    font-weight: 10; /* Bolder for emphasis */
+    color: #333; /* Darker shade for better contrast */
     margin-top: 5%;
   }
   
@@ -253,7 +389,7 @@
     margin: 20px;
     padding: 20px 60px;
     border-radius: 10px;
-    border: none;
+    border: 0.7rem solid rgba(0, 0, 0, 0.315);
     color: black;
     font-family: Arial, sans-serif;
     font-size: 1em;

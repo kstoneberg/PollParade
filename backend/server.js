@@ -79,14 +79,14 @@ app.post('/predict', async (req, res) => {
   }
 });
 
-//get todays poll's vote results
+//get poll of given date
 app.get('/polls/results/:date', async (req, res) => {
   const dateString = req.params.date;
 
   try {
     const poll = await Poll.findOne({ date: dateString });
     if (poll) {
-      res.json(poll.choices);
+      res.json(poll);
     } else {
       res.status(404).json({ message: 'No results found for this date' });
     }
