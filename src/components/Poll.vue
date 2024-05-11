@@ -81,6 +81,7 @@
       var displayDate = computed(() => {
         return poll.value.date.slice(5);
       });
+      
 
       onMounted(() => {
         const dateString = new Date().toISOString()
@@ -298,6 +299,7 @@
     justify-content: center;
     /*margin-top: 5%;*/
     overflow: visible;
+    flex-wrap: wrap;
   }
 
   #bgCanvas {
@@ -374,6 +376,7 @@
   
   .choice-button {
     margin: 30px;
+    flex-wrap: wrap;
     border-radius: 50px;
     border: 0.7rem solid rgba(255, 255, 255, 0.315);
     color: white;
