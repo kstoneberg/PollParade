@@ -1,20 +1,16 @@
 <template>
   <div id="app">
-    <Poll />
+    <router-view></router-view> <!-- This will load Poll or PollHistory based on the route -->
   </div>
 </template>
 
 <script>
-import Poll from './components/Poll.vue';
-
 export default {
-  name: 'App',
-  components: {
-    Poll
-  }
+  name: 'App'
 };
 </script>
 
 <style>
 /* Global styles can go here */
 </style>
+

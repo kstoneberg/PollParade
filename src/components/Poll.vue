@@ -1,5 +1,8 @@
 <template>
   <div class="poll">
+
+    <button @click="viewHistory" class="view-history-button">View Poll History</button>
+
     <canvas id="bgCanvas"></canvas>
     <div style="position: relative; z-index: 1;">
       <transition name="flip" mode="out-in">
@@ -37,8 +40,9 @@
       </transition>
       <!-- Confirmation and Results Viewing -->
       <div v-if="predictionSubmitted && yesterdayResults.length === 0">
-        <h4>Your vote has been recorded.</h4>
-        <button @click="viewYesterdayResults">View Yesterday's Results</button>
+        <h4>Your vote has been recorded</h4>
+        <button @click="viewYesterdayResults" class="view-results-button">View Yesterday's Results</button>
+
       </div>
       <div v-if="yesterdayResults.length > 0" class="chart-container">
         <h5>On {{ displayDate }} we asked you:</h5>
@@ -54,6 +58,7 @@
   import { ref, onMounted, computed, nextTick } from 'vue';
   import axios from 'axios';
   import { Chart, registerables } from "chart.js";
+  import { useRouter } from 'vue-router';
 
   
   Chart.register(...registerables);
@@ -67,6 +72,7 @@
       const yesterdayResults = ref([]);
       const displayQuestion = ref('');
       var myChart;
+      const router = useRouter();
 
       const colors = ["#ff4b4b", "#4b6bff", "#47d147", "#ffa500"];  //red, blue, green, orange
       const bgGradients = [
@@ -90,6 +96,7 @@
         window.addEventListener('resize', adjustCanvasSize);
         //resetBackground();
         adjustCanvasSize();
+        fetchPoll();
       });
 
       const adjustCanvasSize = () => {
@@ -169,7 +176,6 @@
         }
       };
 
-
       const changeBackground = (index) => {
         if(index != lastHovered){
           const ctx = canvas.value.getContext('2d');
@@ -197,6 +203,8 @@
         lastHovered = index;
       };
 
+
+      /*RESULTS CHART GRAPH*/
       const createChart = () => {
         nextTick(() => {
           var chartCanvas = document.getElementById('myChart');
@@ -213,12 +221,57 @@
                   datasets: [{
                     data: yesterdayResults.value.map(choice => choice.votes),
                     backgroundColor: ['#ff4b4b', '#4b6bff', '#47d147', '#ffa500'],
-                    hoverOffset: 4
+                    borderColor: ['#1d3557', '#1d3557', '#1d3557', '#1d3557'],
+                    borderWidth: 2,
+                    hoverOffset: 15
                   }]
                 },
                 options: {
                   responsive: true,
-                  maintainAspectRatio: false
+                  maintainAspectRatio: false,
+                  layout: { //container for the chart
+                    padding: {
+                      top: 20,
+                      bottom: 20,
+                      left: 20,
+                      right: 20
+                    }
+                  },  
+                  animation: {
+                    animateScale: true,
+                    animateRotate: true
+                  },
+                  plugins: {
+                    legend: {
+                      position: 'top', // Change the position to 'top', 'left', 'bottom', or 'right'
+                      labels: {
+                        font: {
+                          size: 18, // Change the font size
+                          style: 'italic', // Change the font style
+                          family: 'Arial', // Change the font family
+                          weight: 'bold'
+                        },
+                        color: '#1d3557', // Change the font color
+                        padding: 20, // Add padding between labels
+                        usePointStyle: true, // Use point style instead of box
+                        pointStyle: 'circle' // Change the point style
+                      }
+                    },
+                    tooltip: {
+                      callbacks: {
+                        label: function(context) {
+                          let label = context.label || '';
+                          if (label) {
+                            label += ': ';
+                          }
+                          if (context.raw !== null) {
+                            label += context.raw + ' votes';
+                          }
+                          return label;
+                        }
+                      }
+                    }
+                  }
                 }
               });
             } else {
@@ -251,6 +304,10 @@
 
          animateReset(); // Start the reset animation
       };
+
+      const viewHistory = () => {
+        router.push({ name: 'PollHistory' });
+      };
   
       onMounted(fetchPoll);
   
@@ -267,7 +324,8 @@
                displayDate,
                displayQuestion,
                createChart,
-               myChart
+               myChart,
+               viewHistory
              };
     }
   };
@@ -326,6 +384,21 @@
     height: 100%; /* Full height of its container */
   }
 
+  .view-history-button {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 2;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+  }
+
+  .view-history-button:hover {
+    background-color: #0056b3;
+  }
 
   /* Style for Questions */
   h1 {
@@ -336,7 +409,6 @@
     text-underline-offset: 30px;
     color: #333; /* Darker shade for better contrast */
     margin: 0 0 30px; /* Added spacing below the question */
-
   }
 
   /* Style for Prediction Prompt */
@@ -355,23 +427,54 @@
     font-size: 1.5rem; /* Larger font size for better readability */
     font-weight: 10; /* Bolder for emphasis */
     color: #333; /* Darker shade for better contrast */
-    margin-top: 5%;
+    margin-top: 2%;
   }
 
   /* Style for your vote has been recorded */
   h4 {
-    font-size: 1.5rem; /* Larger font size for better readability */
-    font-weight: 10; /* Bolder for emphasis */
+    font-size: 4.0rem; /* Larger font size for better readability */
+    font-weight: 800; /* Bolder for emphasis */
+    text-decoration: underline overline;
+    text-decoration-thickness: 6px;
+    text-underline-offset: 35px;
     color: #333; /* Darker shade for better contrast */
-    margin-top: 5%;
+    margin: 80px 0 200px; /* Added spacing below the question */
   }
 
-  /* Style for yesterday's results prompt */
+  /* Style for view results button */
+  .view-results-button {
+    background-color: #424242; /* Green background */
+    border: none; /* Remove default border */
+    color: rgb(255, 255, 255); /* White text */
+    padding: 16px 41px; /* Padding for size */
+    text-align: center; /* Center text */
+    text-decoration: none; /* Remove underline */
+    display: inline-block; /* Inline-block for size control */
+    font-size: 41px; /* Medium font size */
+    margin: 4px 2px; /* Small margin */
+    cursor: pointer; /* Pointer cursor on hover */
+    border-radius: 8px; /* Rounded corners */
+    transition: background-color 0.3s, transform 0.3s; /* Smooth transitions */
+  }
+
+  /* Hover effect for the view-results button */
+  .view-results-button:hover {
+    background-color: #313131; /* Darker green on hover */
+    transform: scale(1.05); /* Slightly larger on hover */
+  }
+
+  /* Focus effect for the view-results button */
+  .view-results-button:focus {
+    outline: none; /* Remove default focus outline */
+    box-shadow: 0 0 5px #272727; /* Green shadow */
+  }
+
+  /* Style for On *date* we asked you */
   h5 {
     font-size: 1.5rem; /* Larger font size for better readability */
     font-weight: 10; /* Bolder for emphasis */
     color: #333; /* Darker shade for better contrast */
-    margin-top: 5%;
+    margin-top: 2%;
   }
   
   .choice-button {

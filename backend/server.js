@@ -95,6 +95,16 @@ app.get('/polls/results/:date', async (req, res) => {
   }
 });
 
+// get all polls
+app.get('/polls', async (req, res) => {
+  try {
+    const polls = await Poll.find({}, 'date'); // Fetch only the date field
+    res.json(polls);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 //start the server
 app.listen(port, () => {
   console.log(`Server listening at http://localhost:${port}`);
