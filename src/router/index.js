@@ -2,6 +2,8 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import Poll from '../components/Poll.vue';
 import PollHistory from '../components/PollHistory.vue';
+import YesterdaysResults from '../components/YesterdaysResults.vue';
+
 
 const routes = [
   {
@@ -14,6 +16,11 @@ const routes = [
     name: 'PollHistory',
     component: PollHistory,
   },
+  {
+    path: '/yesterday',
+    name: 'YesterdaysResults',
+    component: YesterdaysResults,
+  }
 ];
 
 const router = createRouter({
