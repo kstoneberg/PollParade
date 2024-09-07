@@ -36,12 +36,7 @@ export default {
       }
     },
     async loadPollResults(date) {
-      try {
-        const response = await axios.get(`http://localhost:5656/polls/results/${date}`);
-        console.log(response.data); // Handle the poll results as needed
-      } catch (error) {
-        console.error('Failed to load poll results:', error);
-      }
+      this.$router.push({ name: 'PastPollResults', params: { date } });
     }
   }
 };

@@ -3,6 +3,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import Poll from '../components/Poll.vue';
 import PollHistory from '../components/PollHistory.vue';
 import YesterdaysResults from '../components/YesterdaysResults.vue';
+import PastPollResults from '../components/PastPollResults.vue';
 
 
 const routes = [
@@ -20,6 +21,11 @@ const routes = [
     path: '/yesterday',
     name: 'YesterdaysResults',
     component: YesterdaysResults,
+  },
+  {
+    path: '/results',
+    name: 'PastPollResults',
+    component: PastPollResults,
   }
 ];
 
