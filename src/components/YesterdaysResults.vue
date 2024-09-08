@@ -1,6 +1,8 @@
 <template>
-  <button @click="$router.push('/')">Go to Poll</button>
-  <button @click="viewHistory" class="view-history-button">View Poll History</button>
+  <div class="button-container">
+    <button @click="$router.push('/')">Go to Poll</button>
+    <button @click="viewHistory">View Poll History</button>
+  </div>
   <div class="yesterday-results-container">
     <h5 class="results-title">On {{ displayDate }} we asked you:</h5>
     <h1>{{ displayQuestion }}</h1>
@@ -152,6 +154,13 @@ export default {
   justify-content: center;
   height: 100vh;
   text-align: center;
+}
+
+.button-container {
+    display: flex; /* Use flexbox for button layout */
+    justify-content: flex-start; /* Align buttons to the left (or change as needed) */
+    gap: 10px; /* Add space between buttons */
+    margin-bottom: 20px; /* Add space below the buttons */
 }
 
 #myChart {

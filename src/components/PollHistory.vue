@@ -30,7 +30,11 @@ export default {
     async fetchPolls() {
       try {
         const response = await axios.get('http://localhost:5656/polls');
-        this.polls = response.data;
+        var today = new Date();
+        today = today.toISOString().split('T')[0];
+        console.log(today);
+        // Filter out today's and future polls
+        this.polls = response.data.filter(poll => poll.date < today);
       } catch (error) {
         console.error('Failed to fetch polls:', error);
       }

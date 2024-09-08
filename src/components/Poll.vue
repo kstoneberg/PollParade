@@ -3,6 +3,9 @@
 
     <button @click="viewHistory" class="view-history-button">View Poll History</button>
 
+    <!-- For debugging: Clears cookies-->
+    <button @click="clearCookies" class="clear-cookies-button">Clear Cookies</button>
+
     <canvas id="bgCanvas"></canvas>
     <div style="position: relative; z-index: 1;">
       <transition name="flip" mode="out-in">
@@ -55,6 +58,7 @@ import { ref, onMounted, computed } from 'vue';
 import axios from 'axios';
 import { Chart, registerables } from "chart.js";
 import { useRouter } from 'vue-router';
+import Cookies from 'js-cookie';
 import '../components/Poll.css'; // Import the CSS file
 
 Chart.register(...registerables);
@@ -114,13 +118,31 @@ export default {
       try {
         const response = await axios.get('http://localhost:5656/polls/today');
         poll.value = response.data;
+        checkIfVoted();
       } catch (error) {
         console.error('Failed to fetch poll:', error);
       }
     };
 
+    //Check if the user has already voted and predicted today
+    const checkIfVoted = () => {
+      const todayString = new Date().toISOString().split('T')[0];
+      const votedDate = Cookies.get('votedDate');
+      const predictionDate = Cookies.get('predictionDate');
+      if (votedDate === todayString) {
+        voted.value = true; // When true go to results
+        if (predictionDate === todayString) {
+          predictionSubmitted.value = true; // When true show confirmation
+        }
+      }
+    };
+
     const submitVote = async (choice) => {
       try {
+        if (voted.value) {
+          alert('You have already voted today.');
+          return;
+        }
         console.log(`Vote submitted: ${choice}`);
         const response = await axios.post('http://localhost:5656/vote', {
           choice: choice,
@@ -128,6 +150,8 @@ export default {
         });
         console.log(response.data.message);  // Display a simple alert with the server response
         voted.value = true;  // Change state to show prediction options
+        // Set cookie to expire in 1 day
+        Cookies.set('votedDate', new Date().toISOString().split('T')[0], { expires: 1 });
       } catch (error) {
         console.error('Failed to submit vote:', error);
         alert('Failed to submit vote');
@@ -143,6 +167,7 @@ export default {
         });
         console.log(response.data.message);
         predictionSubmitted.value = true;
+        Cookies.set('predictionDate', new Date().toISOString().split('T')[0], { expires: 1 });
       } catch (error) {
         console.error('Failed to submit prediction:', error);
         alert('Failed to submit prediction');
@@ -205,6 +230,15 @@ export default {
       router.push({ name: 'PollHistory' });
     };
 
+    //DEBUGGING
+    const clearCookies = () => {
+      Cookies.remove('votedDate');
+      Cookies.remove('predictionDate');
+      voted.value = false;
+      predictionSubmitted.value = false;
+      alert('Cookies cleared');
+    };    
+
     onMounted(fetchPoll);
 
     return { poll,
@@ -220,7 +254,8 @@ export default {
               displayDate,
               displayQuestion,
               myChart,
-              viewHistory
+              viewHistory,
+              clearCookies //DEBUGGING
             };
   }
 };
