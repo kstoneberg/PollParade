@@ -8,7 +8,7 @@
         v-for="poll in polls"
         :key="poll.date"
         @click="loadPollResults(poll.date)">
-        {{ poll.date }}
+        <strong>{{ poll.date }}</strong> <br> {{ poll.question }}
       </button>
     </div>
   </div>
@@ -30,9 +30,9 @@ export default {
     async fetchPolls() {
       try {
         const response = await axios.get('http://localhost:5656/polls');
+        console.log(response.data);
         var today = new Date();
         today = today.toISOString().split('T')[0];
-        console.log(today);
         // Filter out today's and future polls
         this.polls = response.data.filter(poll => poll.date < today);
       } catch (error) {
@@ -57,7 +57,7 @@ export default {
 
 .history-title {
   font-size: 24px;
-  margin-bottom: 20px;
+  margin-bottom: 40px;
   text-align: center;
 }
 

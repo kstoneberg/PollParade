@@ -2,6 +2,7 @@
   <div class="poll">
 
     <button @click="viewHistory" class="view-history-button">View Poll History</button>
+    <button @click="infoVisible = !infoVisible" class="view-info-button">?</button>
 
     <!-- For debugging: Clears cookies-->
     <button @click="clearCookies" class="clear-cookies-button">Clear Cookies</button>
@@ -44,6 +45,18 @@
         </div>
       </transition>
 
+      <!-- Info Popup -->
+      <div v-if="infoVisible" class="info-popup">
+        <div class="info-content">
+          <h2>Welcome To Poll Parade</h2>
+          <p>Come back every day for a new poll<br>
+             Vote for your favorite choice and predict the winner<br>
+             Check back tomorrow to see the results and compare with your prediction
+          </p>
+          <button @click="infoVisible = false" class="close-info-button">Close</button>
+        </div>
+      </div>
+
       <!-- Confirmation and Results Viewing -->
       <div v-if="predictionSubmitted && yesterdayResults.length === 0">
         <h4>Your vote has been recorded</h4>
@@ -71,6 +84,7 @@ export default {
     const predictionSubmitted = ref(false);
     const yesterdayResults = ref([]);
     const displayQuestion = ref('');
+    const infoVisible = ref(false);
     var myChart;
     const router = useRouter();
 
@@ -255,6 +269,7 @@ export default {
               displayQuestion,
               myChart,
               viewHistory,
+              infoVisible,
               clearCookies //DEBUGGING
             };
   }
