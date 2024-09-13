@@ -1,8 +1,13 @@
 [
     {
-        "date": "2024-05-08",
+        "date": "2024-05-14",
         "question": "What animal makes the best pet?",
         "choices": ["Dog", "Cat", "Rabbit", "Other"]
+    },
+    {
+        "date": "2024-05-15",
+        "question": "Whats your favorite part of Chex Mix?",
+        "choices": ["Corn Chex", "Breadstick", "Rye Chip", "Pretzel"]
     }
 ]
 

@@ -1,7 +1,9 @@
 <template>
   <div class="poll">
 
-    <button @click="viewHistory" class="view-history-button">View Poll History</button>
+    <v-btn @click="viewHistory" class="view-history-button" color="primary">
+      View Poll History
+    </v-btn>
     <button @click="infoVisible = !infoVisible" class="view-info-button">?</button>
 
     <!-- For debugging: Clears cookies-->
@@ -73,11 +75,15 @@ import { Chart, registerables } from "chart.js";
 import { useRouter } from 'vue-router';
 import Cookies from 'js-cookie';
 import '../components/Poll.css'; // Import the CSS file
+import { VBtn } from 'vuetify/components';
 
 Chart.register(...registerables);
 
 export default {
   name: 'PollComponent',
+  components: {
+    VBtn, // Register the Vuetify Button component
+  },
   setup() {
     const poll = ref({ date: '', question: '', choices: [] });
     const voted = ref(false);
