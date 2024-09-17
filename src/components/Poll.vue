@@ -1,71 +1,66 @@
 <template>
-  <div class="poll">
+  <v-app>
 
-    <v-btn @click="viewHistory" class="view-history-button" color="primary">
-      View Poll History
-    </v-btn>
-    <button @click="infoVisible = !infoVisible" class="view-info-button">?</button>
+    <v-container>
+      <v-row justify="end">
+        <v-col cols="auto">
+          <!-- View Menu Button -->
+          <ButtonMenu
+            @view-history="viewHistory"
+            @clear-cookies="clearCookies"
+          />
+        </v-col>
+      </v-row>
+    </v-container>
 
-    <!-- For debugging: Clears cookies-->
-    <button @click="clearCookies" class="clear-cookies-button">Clear Cookies</button>
+    <div class="poll">
 
-    <canvas id="bgCanvas"></canvas>
-    <div style="position: relative; z-index: 1;">
-      <transition name="flip" mode="out-in">
-        <div :key="voted ? 'prediction' : 'voting'">
+      <canvas id="bgCanvas"></canvas>
+      <div style="position: relative; z-index: 1;">
+        <transition name="flip" mode="out-in">
+          <div :key="voted ? 'prediction' : 'voting'">
 
-          <!-- Voting Interface -->
-          <div v-if="!voted && !predictionSubmitted">
-            <h3>{{ displayDate }}</h3>
-            <h1>{{ poll.question }}</h1>
-            <div class="choices">
-              <button
-                v-for="(choice, index) in poll.choices"
-                :key="choice.text"
-                :style="{ backgroundColor: colors[index % colors.length] }"
-                @click="submitVote(choice.text)"
-                @mouseover="changeBackground(index)"
-                class="choice-button">
-                {{ choice.text }}
-              </button>
+            <!-- Voting Interface -->
+            <div v-if="!voted && !predictionSubmitted">
+              <h3>{{ displayDate }}</h3>
+              <h1>{{ poll.question }}</h1>
+              <div class="choices">
+                <button
+                  v-for="(choice, index) in poll.choices"
+                  :key="choice.text"
+                  :style="{ backgroundColor: colors[index % colors.length] }"
+                  @click="submitVote(choice.text)"
+                  @mouseover="changeBackground(index)"
+                  class="choice-button">
+                  {{ choice.text }}
+                </button>
+              </div>
+            </div>
+
+            <!-- Prediction Interface -->
+            <div v-if="voted && !predictionSubmitted">
+              <h2>Predict which choice will get the most votes</h2>
+              <div class="choices predictions">
+                <button
+                  v-for="choice in poll.choices"
+                  :key="choice.text"
+                  @click="submitPrediction(choice.text)"
+                  class="prediction-button">
+                  {{ choice.text }}
+                </button>
+              </div>
             </div>
           </div>
+        </transition>
 
-          <!-- Prediction Interface -->
-          <div v-if="voted && !predictionSubmitted">
-            <h2>Predict which choice will get the most votes</h2>
-            <div class="choices predictions">
-              <button
-                v-for="choice in poll.choices"
-                :key="choice.text"
-                @click="submitPrediction(choice.text)"
-                class="prediction-button">
-                {{ choice.text }}
-              </button>
-            </div>
-          </div>
+        <!-- Confirmation and Results Viewing -->
+        <div v-if="predictionSubmitted && yesterdayResults.length === 0">
+          <h4>Your vote has been recorded</h4>
+          <button @click="viewYesterdayResults" class="view-results-button">View Yesterday's Results</button>
         </div>
-      </transition>
-
-      <!-- Info Popup -->
-      <div v-if="infoVisible" class="info-popup">
-        <div class="info-content">
-          <h2>Welcome To Poll Parade</h2>
-          <p>Come back every day for a new poll<br>
-             Vote for your favorite choice and predict the winner<br>
-             Check back tomorrow to see the results and compare with your prediction
-          </p>
-          <button @click="infoVisible = false" class="close-info-button">Close</button>
-        </div>
-      </div>
-
-      <!-- Confirmation and Results Viewing -->
-      <div v-if="predictionSubmitted && yesterdayResults.length === 0">
-        <h4>Your vote has been recorded</h4>
-        <button @click="viewYesterdayResults" class="view-results-button">View Yesterday's Results</button>
       </div>
     </div>
-  </div>
+  </v-app>
 </template>
   
 <script>
@@ -75,14 +70,16 @@ import { Chart, registerables } from "chart.js";
 import { useRouter } from 'vue-router';
 import Cookies from 'js-cookie';
 import '../components/Poll.css'; // Import the CSS file
-import { VBtn } from 'vuetify/components';
+import ButtonMenu from '../components/ButtonMenu.vue';
+
+
 
 Chart.register(...registerables);
 
 export default {
   name: 'PollComponent',
   components: {
-    VBtn, // Register the Vuetify Button component
+    ButtonMenu
   },
   setup() {
     const poll = ref({ date: '', question: '', choices: [] });
@@ -90,7 +87,6 @@ export default {
     const predictionSubmitted = ref(false);
     const yesterdayResults = ref([]);
     const displayQuestion = ref('');
-    const infoVisible = ref(false);
     var myChart;
     const router = useRouter();
 
@@ -275,7 +271,6 @@ export default {
               displayQuestion,
               myChart,
               viewHistory,
-              infoVisible,
               clearCookies //DEBUGGING
             };
   }

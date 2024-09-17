@@ -1,6 +1,0 @@
-/* src/styles/variables.scss */
-
-$primary-color: #1976D2;
-$secondary-color: #424242;
-
-/* Add more variables or mixins as needed */

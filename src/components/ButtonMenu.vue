@@ -1,0 +1,113 @@
+<template>
+  <v-dialog max-width="500">
+    <!-- Activator (Menu Icon) -->
+    <template v-slot:activator="{ props: activatorProps }">
+      <v-btn
+        v-bind="activatorProps"
+        color="surface-variant"
+        variant="flat"
+        icon
+      >
+        <v-icon>mdi-menu</v-icon>
+      </v-btn>
+    </template>
+
+    <!-- Dialog Content -->
+    <template v-slot:default="{ isActive }">
+      <v-card>
+        <!-- Remove fixed height and unnecessary v-container -->
+        <v-card-title class="text-h5 text-center">
+          Poll Parade
+        </v-card-title>
+
+        <v-card-text class="d-flex flex-column" style="min-height: 100%;">
+          <!-- Use a single container for content and button -->
+          <template v-if="viewState === 'buttons'">
+            <div class="d-flex flex-column align-center justify-center" style="flex: 1;">
+              <!-- View Poll History Button -->
+              <v-btn
+                @click="$emit('view-history')"
+                color="secondary"
+                width="200"
+                class="mb-2"
+              >
+                View Poll History
+              </v-btn>
+
+              <!-- Clear Cookies Button -->
+              <v-btn
+                @click="$emit('clear-cookies')"
+                color="error"
+                width="200"
+                class="mb-2"
+              >
+                Clear Cookies
+              </v-btn>
+
+              <!-- More Info Button -->
+              <v-btn
+                @click="showInfo"
+                color="primary"
+                width="200"
+              >
+                More Info
+              </v-btn>
+            </div>
+          </template>
+
+          <!-- Info Screen -->
+          <template v-else-if="viewState === 'info'">
+            <div class="d-flex flex-column justify-space-between" style="flex: 1;">
+              <!-- Info Text -->
+              <div>
+                Come back every day for a new poll<br>
+                Vote for your favorite choice and predict the winner<br>
+                Check back tomorrow to see the results and compare with your prediction
+              </div>
+
+              <!-- Back Button -->
+              <v-btn
+                @click="showButtons"
+                color="primary"
+                width="200"
+                class="mt-4 align-self-center"
+              >
+                Back
+              </v-btn>
+            </div>
+          </template>
+        </v-card-text>
+
+        <!-- Close Button -->
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn text @click="isActive.value = false">Close</v-btn>
+        </v-card-actions>
+      </v-card>
+    </template>
+  </v-dialog>
+</template>
+
+<script>
+import { ref } from 'vue';
+
+export default {
+  setup() {
+    const viewState = ref('buttons');
+
+    const showInfo = () => {
+      viewState.value = 'info';
+    };
+
+    const showButtons = () => {
+      viewState.value = 'buttons';
+    };
+
+    return {
+      viewState,
+      showInfo,
+      showButtons
+    };
+  }
+};
+</script>
