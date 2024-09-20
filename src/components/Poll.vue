@@ -8,6 +8,7 @@
           <ButtonMenu
             @view-history="viewHistory"
             @clear-cookies="clearCookies"
+            @suggest-poll="suggestPollForm"
           />
         </v-col>
       </v-row>
@@ -246,6 +247,10 @@ export default {
       router.push({ name: 'PollHistory' });
     };
 
+    const suggestPollForm = () => {
+      router.push({ name: 'PollSuggestForm' });
+    };
+
     //DEBUGGING
     const clearCookies = () => {
       Cookies.remove('votedDate');
@@ -271,6 +276,7 @@ export default {
               displayQuestion,
               myChart,
               viewHistory,
+              suggestPollForm,
               clearCookies //DEBUGGING
             };
   }

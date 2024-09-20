@@ -32,7 +32,6 @@
   z-index: 10;
 }
 
-
 .chart-container {
   width: 100%; /* Full width of its parent */
   height: 600px; /* Fixed height */
@@ -171,51 +170,6 @@ h5 {
 }
 
 
-/* Style for the app bar buttons 
-.view-history-button {
-  position: absolute;
-  margin-left: 4px;
-  top: 10px;
-  left: 10px;
-  z-index: 2;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  cursor: pointer;
-}
-
-.view-menu-button {
-  position: absolute;
-  margin-left: 400px;
-  top: 10px;
-  left: 10px;
-  z-index: 2;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  cursor: pointer;
-}
-
-.clear-cookies-button {
-  position: absolute;
-  margin-right: 16px;
-  top: 10px;
-  right: 10px;
-  padding: 5px 10px;
-  font-size: 12px;
-  background-color: #ff4b4b;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  z-index: 1000;
-}
-
-.clear-cookies-button:hover {
-  background-color: #ff1a1a;
-}*/
 
 
 .info-popup {

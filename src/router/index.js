@@ -4,6 +4,7 @@ import Poll from '../components/Poll.vue';
 import PollHistory from '../components/PollHistory.vue';
 import YesterdaysResults from '../components/YesterdaysResults.vue';
 import PastPollResults from '../components/PastPollResults.vue';
+import PollSuggestForm from '../components/PollSuggestForm.vue';
 
 
 const routes = [
@@ -26,6 +27,11 @@ const routes = [
     path: '/results',
     name: 'PastPollResults',
     component: PastPollResults,
+  },
+  {
+    path: '/PollSuggestForm',
+    name: 'PollSuggestForm',
+    component: PollSuggestForm,
   }
 ];
 

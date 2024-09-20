@@ -24,14 +24,35 @@
           <!-- Use a single container for content and button -->
           <template v-if="viewState === 'buttons'">
             <div class="d-flex flex-column align-center justify-center" style="flex: 1;">
+
               <!-- View Poll History Button -->
               <v-btn
                 @click="$emit('view-history')"
-                color="secondary"
+                color="primary"
                 width="200"
                 class="mb-2"
               >
                 View Poll History
+              </v-btn>
+
+              <!-- Suggest a Poll Button -->
+              <v-btn
+                @click="$emit('suggest-poll')"
+                color="primary"
+                width="200"
+                class="mb-2"
+              >
+              Suggest a Poll
+              </v-btn> 
+
+              <!-- More Info Button -->
+              <v-btn
+                @click="showInfo"
+                color="primary"
+                width="200"
+                class="mb-2"
+              >
+                More Info
               </v-btn>
 
               <!-- Clear Cookies Button -->
@@ -43,15 +64,7 @@
               >
                 Clear Cookies
               </v-btn>
-
-              <!-- More Info Button -->
-              <v-btn
-                @click="showInfo"
-                color="primary"
-                width="200"
-              >
-                More Info
-              </v-btn>
+              
             </div>
           </template>
 
@@ -60,9 +73,11 @@
             <div class="d-flex flex-column justify-space-between" style="flex: 1;">
               <!-- Info Text -->
               <div>
-                Come back every day for a new poll<br>
-                Vote for your favorite choice and predict the winner<br>
-                Check back tomorrow to see the results and compare with your prediction
+                <p style="text-align: center">
+                  Come back every day for a new poll<br>
+                  Vote for your favorite choice and predict the winner<br>
+                  Check back tomorrow to see the results and compare with your prediction
+                </p>
               </div>
 
               <!-- Back Button -->
