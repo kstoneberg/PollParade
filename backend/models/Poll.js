@@ -11,10 +11,19 @@ const pollSchema = new Schema({
   }]
 });
 
+const suggestionSchema = new Schema({
+  //userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, // Optional if you track users
+  question: { type: String, required: true },
+  choices: [{ type: String }], // Array of possible answer choices
+  submittedAt: { type: Date, default: Date.now },
+  status: { type: String, enum: ['pending', 'approved', 'rejected'], default: 'pending' }
+});
+
 //add an index to the 'date' field to improve query performance
 pollSchema.index({ date: 1 });
 
 //compile schema into a model
 const Poll = mongoose.model('Poll', pollSchema);
+const Suggestion = mongoose.model('Suggestion', suggestionSchema);
 
-module.exports = Poll;
+module.exports = { Poll, Suggestion };

@@ -255,6 +255,7 @@ export default {
     const clearCookies = () => {
       Cookies.remove('votedDate');
       Cookies.remove('predictionDate');
+      Cookies.remove('suggestedDate');
       voted.value = false;
       predictionSubmitted.value = false;
       alert('Cookies cleared');

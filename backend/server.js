@@ -2,7 +2,7 @@ const express = require('express');
 const path = require('path');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const Poll = require('./models/Poll');
+const { Poll, Suggestion } = require('./models/Poll');
 const app = express();
 const port = 5656; 
 const dbUri = 'mongodb://localhost:27017/pollApp';
@@ -100,6 +100,25 @@ app.get('/polls', async (req, res) => {
   try {
     const polls = await Poll.find({}, 'date question'); // Fetch only the date field
     res.json(polls);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Submit a poll suggestion
+app.post('/polls/suggestions', async (req, res) => {
+  const { question, choices } = req.body;
+  try {
+    // Create a new suggestion
+    const suggestion = new Suggestion({
+      question,
+      choices,
+    });
+
+    // Save the suggestion to the database
+    await suggestion.save();
+
+    res.status(201).json({ message: 'Poll suggestion submitted successfully.', suggestion });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
