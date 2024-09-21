@@ -1,6 +1,6 @@
 <template>
     <v-btn @click="$router.push('/manage-suggestions')" color="primary">Back</v-btn>
-    <v-container class="edit-suggestion">
+    <v-container class="edit-suggestion" v-if="editableSuggestion">
         <v-card>
             <v-card-title>Edit Suggestion</v-card-title>
             <v-card-text>
@@ -36,41 +36,68 @@
             </v-card-actions>
         </v-card>
     </v-container>
+    <div v-else>
+        Loading...
+    </div>
 </template>
 
+
 <script>
+import axios from 'axios';
+
 export default {
     name: 'EditSuggestion',
     props: {
-        suggestion: {
-            type: Object,
+        id: {
+            type: String,
             required: true
         }
     },
     data() {
         return {
-            editableSuggestion: { ...this.suggestion },
+            editableSuggestion: null,
             statusOptions: ['pending', 'approved', 'rejected']
         };
     },
+    created() {
+        this.fetchSuggestion();
+    },
     methods: {
+        async fetchSuggestion() {
+            try {
+                const response = await axios.get(`http://localhost:5656/edit-suggestion/${this.id}`);
+                this.editableSuggestion = response.data;
+            } catch (error) {
+                console.error('Failed to fetch suggestion:', error);
+            }
+        },
         saveChanges() {
             // Logic to save changes to the suggestion
-            this.$emit('update-suggestion', this.editableSuggestion);
+            // For example, send a PUT request to update the suggestion
+            axios.put(`http://localhost:5656/edit-suggestion/${this.id}`, this.editableSuggestion)
+                .then(() => {
+                    alert('Changes saved successfully.');
+                })
+                .catch(error => {
+                    console.error('Failed to save changes:', error);
+                });
         },
         handleApproval() {
-            // Logic to approve the suggestion and add to Poll database
+            // Logic to approve the suggestion
             this.editableSuggestion.status = 'approved';
-            this.$emit('approve-suggestion', this.editableSuggestion);
+            this.saveChanges();
+            // Optionally, emit an event or navigate away
         },
         handleRejection() {
-            // Logic to reject the suggestion and delete from suggestion database
+            // Logic to reject the suggestion
             this.editableSuggestion.status = 'rejected';
-            this.$emit('reject-suggestion', this.editableSuggestion);
+            this.saveChanges();
+            // Optionally, emit an event or navigate away
         }
     }
 };
 </script>
+
 
 <style scoped>
 .edit-suggestion {

@@ -7,8 +7,8 @@
         <v-btn
           class="view-poll-suggestion-button"
           v-for="suggestion in suggestions"
-          :key="suggestion.question"
-          @click="loadEditSuggestion(suggestion.question)"
+          :key="suggestion._id"
+          @click="loadEditSuggestion(suggestion._id)"
           color="success"
         >
           <strong>{{ suggestion.question }}</strong>
@@ -40,8 +40,9 @@
           console.error('Failed to fetch suggestions:', error);
         }
       },
-      async loadEditSuggestion(suggestion) {
-        this.$router.push({ name: 'EditSuggestion', params: { suggestion } });
+      async loadEditSuggestion(suggestionId) {
+        console.log('Navigating to EditSuggestion with id:', suggestionId);
+        this.$router.push({ name: 'EditSuggestion', params: { id: suggestionId } });
       }
     }
   };

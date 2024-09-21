@@ -127,12 +127,33 @@ app.post('/polls/suggestions', async (req, res) => {
 // get all suggestions
 app.get('/suggestions', async (req, res) => {
   try {
-    const suggestions = await Suggestion.find({}); // Fetch only the question field
+    const suggestions = await Suggestion.find(); // Fetch only the question field
     res.json(suggestions);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 });
+
+app.get('/edit-suggestion/:id', async (req, res) => {
+  const { id } = req.params;
+
+  // Validate the ObjectId
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).json({ message: 'Invalid suggestion ID' });
+  }
+
+  try {
+    const suggestion = await Suggestion.findById(id);
+    if (suggestion) {
+      res.json(suggestion);
+    } else {
+      res.status(404).json({ message: 'No results found for this id' });
+    }
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 
 //start the server
 app.listen(port, () => {

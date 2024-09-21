@@ -41,9 +41,10 @@ const routes = [
     component: ManageSuggestions,
   },
   {
-    path: '/edit-suggestion',
+    path: '/edit-suggestion/:id',
     name: 'EditSuggestion',
     component: EditSuggestion,
+    props: true
   }
 ];
 
