@@ -1,6 +1,14 @@
 <template>
     <v-app>
         <v-container>
+
+            <!-- Back Button -->
+            <v-row justify="left">
+                <v-col cols="4" md="1" class="text-center">
+                    <v-btn color="primary" class="mt-2" @click="$router.push('/')">Back</v-btn>
+                </v-col>
+            </v-row>
+
             <div v-if="!suggestedAlready">
                 <v-form v-model="valid" ref="form">
                     <!--Title-->

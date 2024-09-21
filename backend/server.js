@@ -124,6 +124,16 @@ app.post('/polls/suggestions', async (req, res) => {
   }
 });
 
+// get all suggestions
+app.get('/suggestions', async (req, res) => {
+  try {
+    const suggestions = await Suggestion.find({}); // Fetch only the question field
+    res.json(suggestions);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 //start the server
 app.listen(port, () => {
   console.log(`Server listening at http://localhost:${port}`);

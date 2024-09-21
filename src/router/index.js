@@ -5,6 +5,8 @@ import PollHistory from '../components/PollHistory.vue';
 import YesterdaysResults from '../components/YesterdaysResults.vue';
 import PastPollResults from '../components/PastPollResults.vue';
 import PollSuggestForm from '../components/PollSuggestForm.vue';
+import ManageSuggestions from '../components/ManageSuggestions.vue';
+import EditSuggestion from '../components/EditSuggestion.vue';
 
 
 const routes = [
@@ -32,6 +34,16 @@ const routes = [
     path: '/PollSuggestForm',
     name: 'PollSuggestForm',
     component: PollSuggestForm,
+  },
+  {
+    path: '/manage-suggestions',
+    name: 'ManageSuggestions',
+    component: ManageSuggestions,
+  },
+  {
+    path: '/edit-suggestion',
+    name: 'EditSuggestion',
+    component: EditSuggestion,
   }
 ];
 

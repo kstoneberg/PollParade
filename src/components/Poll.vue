@@ -15,7 +15,6 @@
     </v-container>
 
     <div class="poll">
-
       <canvas id="bgCanvas"></canvas>
       <div style="position: relative; z-index: 1;">
         <transition name="flip" mode="out-in">

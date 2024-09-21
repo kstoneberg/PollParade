@@ -1,5 +1,5 @@
 <template>
-  <v-dialog max-width="500">
+  <v-dialog max-width="300">
     <!-- Activator (Menu Icon) -->
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
@@ -14,7 +14,21 @@
 
     <!-- Dialog Content -->
     <template v-slot:default="{ isActive }">
-      <v-card>
+      <v-card color="primary">
+
+        <!-- Close Button -->
+        <v-btn
+          icon
+          @click="isActive.value = false"
+          class="close-btn"
+          outlined
+          :size="25"
+        >
+        <v-icon :size="25">
+            mdi-close
+          </v-icon>
+        </v-btn>
+
         <!-- Remove fixed height and unnecessary v-container -->
         <v-card-title class="text-h5 text-center">
           Poll Parade
@@ -28,7 +42,7 @@
               <!-- View Poll History Button -->
               <v-btn
                 @click="$emit('view-history')"
-                color="primary"
+                color="secondary"
                 width="200"
                 class="mb-2"
               >
@@ -38,7 +52,7 @@
               <!-- Suggest a Poll Button -->
               <v-btn
                 @click="$emit('suggest-poll')"
-                color="primary"
+                color="secondary"
                 width="200"
                 class="mb-2"
               >
@@ -48,11 +62,21 @@
               <!-- More Info Button -->
               <v-btn
                 @click="showInfo"
-                color="primary"
+                color="secondary"
                 width="200"
                 class="mb-2"
               >
                 More Info
+              </v-btn>
+
+              <!--Manage Suggestions Button-->
+              <v-btn
+                @click="$router.push('/manage-suggestions')"
+                color="error"
+                width="200"
+                class="mb-2"
+              >
+                Manage Suggestions
               </v-btn>
 
               <!-- Clear Cookies Button -->
@@ -92,12 +116,7 @@
             </div>
           </template>
         </v-card-text>
-
-        <!-- Close Button -->
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn text @click="isActive.value = false">Close</v-btn>
-        </v-card-actions>
+         
       </v-card>
     </template>
   </v-dialog>
@@ -126,3 +145,11 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+</style>
