@@ -100,8 +100,38 @@ export default {
     let lastHovered = -1;
     const canvas = ref(null);
 
-    var displayDate = computed(() => {
-      return poll.value.date.slice(5);
+    function getOrdinalSuffix(day) {
+      if (day > 3 && day < 21) return "th"; // 11th–13th are special cases
+      switch (day % 10) {
+        case 1:
+          return "st";
+        case 2:
+          return "nd";
+        case 3:
+          return "rd";
+        default:
+          return "th";
+      }
+    }
+
+    const displayDate = computed(() => {
+      // Convert the string to a Date
+      const dateObj = new Date(poll.value.date); // e.g., "2023-01-22"
+      
+      // Extract month & day
+      const monthIndex = dateObj.getMonth(); // 0-based index
+      const day = dateObj.getDate();         // 1–31
+      const suffix = getOrdinalSuffix(day);
+
+      // Map month indices to names
+      const months = [
+        "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December",
+      ];
+      const monthName = months[monthIndex];
+
+      // Combine
+      return `${monthName} ${day}${suffix}`;
     });
     
     onMounted(() => {
@@ -262,7 +292,7 @@ export default {
 
     onMounted(fetchPoll);
 
-    return { poll,
+    return {  poll,
               voted,
               predictionSubmitted,
               submitVote,

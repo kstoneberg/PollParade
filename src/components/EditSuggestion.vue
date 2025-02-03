@@ -66,6 +66,7 @@ export default {
         async fetchSuggestion() {
             try {
                 const response = await axios.get(`http://localhost:5656/edit-suggestion/${this.id}`);
+                console.log('Fetched suggestions:', response.data);
                 this.editableSuggestion = response.data;
             } catch (error) {
                 console.error('Failed to fetch suggestion:', error);
